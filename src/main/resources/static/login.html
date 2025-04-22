@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+</head>
+<body>
+<h2>Login Page</h2>
+<form id="loginForm">
+    <input type="text" id="name" placeholder="Username" required><br>
+    <input type="password" id="password" placeholder="Password" required><br>
+    <button type="submit">Login</button>
+</form>
+
+<p id="result"></p>
+
+<script>
+    document.getElementById("loginForm").addEventListener("submit", async function (e) {
+        e.preventDefault();
+        const name = document.getElementById("name").value;
+        const password = document.getElementById("password").value;
+
+        const response = await fetch("/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name, password })
+        });
+
+        const resultText = await response.text();
+
+        if (resultText.includes("Login berhasil")) {
+            window.location.href = "/index.html";
+        } else {
+            document.getElementById("result").innerText = "Login gagal: " + resultText;
+        }
+    });
+</script>
+</body>
+</html>
