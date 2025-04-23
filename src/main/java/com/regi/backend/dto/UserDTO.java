@@ -11,9 +11,19 @@ import lombok.Setter;
 public class UserDTO {
 
     private Long id;
+
+    private String role;
     private String name;
     private String password;
     private String email;
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
 
     public Long getId() {
         return id;

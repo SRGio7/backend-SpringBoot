@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Daftar Produk</title>
+    <style>
+        .product {
+            border: 1px solid #ccc;
+            padding: 12px;
+            margin: 12px;
+            width: 200px;
+            display: inline-block;
+            text-align: center;
+        }
+
+        img {
+            width: 100%;
+            height: auto;
+            max-height: 150px;
+            object-fit: cover;
+        }
+    </style>
+</head>
+<body>
+<h2>Daftar Produk</h2>
+<div id="productList"></div>
+
+<script>
+    fetch('http://localhost:8085/product/images')
+        .then(response => response.json())
+        .then(data => {
+            const productList = document.getElementById('productList');
+
+            data.forEach(product => {
+                const productDiv = document.createElement('div');
+                productDiv.className = 'product';
+
+                productDiv.innerHTML = `
+                        <h3>${product.name}</h3>
+                        <img src="${product.imagePath}" alt="${product.name}">
+                    `;
+
+                productList.appendChild(productDiv);
+            });
+        })
+        .catch(error => {
+            console.error('Gagal mengambil data:', error);
+        });
+</script>
+</body>
+</html>
