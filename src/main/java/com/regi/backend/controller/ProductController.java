@@ -3,9 +3,20 @@ package com.regi.backend.controller;
 import com.regi.backend.dto.ProductDTO;
 import com.regi.backend.entity.Product;
 import com.regi.backend.service.ProductService;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @RestController
@@ -13,12 +24,36 @@ import java.util.stream.Collectors;
 public class ProductController {
     private final ProductService productService;
 
+    @Value("${upload.path:src/main/resources/static/assets}")
+    private String uploadDir;
+
     public ProductController(ProductService productService) {
         this.productService = productService;
     }
 
-    @PostMapping
-    public ProductDTO create(@RequestBody Product product) {
+    @PostMapping(consumes = {"multipart/form-data"})
+    public ProductDTO create(
+            @RequestParam("name") String name,
+            @RequestParam("quantity") int quantity,
+            @RequestParam("price") float price,
+            @RequestParam("category") String category,
+            @RequestParam("image_url") MultipartFile imageFile
+    ) throws IOException {
+
+        String fileName = UUID.randomUUID() + "_" + StringUtils.cleanPath(Objects.requireNonNull(imageFile.getOriginalFilename()));
+        Path filePath = Paths.get(uploadDir, fileName);
+        Files.createDirectories(filePath.getParent());
+        Files.copy(imageFile.getInputStream(), filePath);
+
+        String imageUrl = "/assets/" + fileName; // URL yang bisa diakses frontend
+
+        Product product = new Product();
+        product.setName(name);
+        product.setQuantity(quantity);
+        product.setPrice(price);
+        product.setCategory(category);
+        product.setImageUrl(imageUrl);
+
         Product createdProduct = productService.create(product);
         return convertToDTO(createdProduct);
     }
