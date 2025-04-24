@@ -9,8 +9,7 @@ import lombok.Setter;
 @Setter
 public class BiodataDTO {
     private String name;
-    private Integer age;
-    private Character gender;
+    private Integer age;    private Character gender;
 
     public String getName() {
         return name;
