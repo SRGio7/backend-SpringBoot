@@ -29,7 +29,7 @@
         const resultText = await response.text();
 
         if (resultText.includes("Login berhasil")) {
-            window.location.href = "/index.html";
+            window.location.href = "/dashboardPrototype.html";
         } else {
             document.getElementById("result").innerText = "Login gagal: " + resultText;
         }
