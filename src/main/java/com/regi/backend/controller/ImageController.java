@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -27,8 +28,19 @@ public class ImageController {
             return ResponseEntity.notFound().build();
         }
 
+        // Deteksi content type secara dinamis
+        String contentType;
+        try {
+            contentType = Files.probeContentType(imagePath);
+            if (contentType == null) {
+                contentType = "application/octet-stream";
+            }
+        } catch (IOException e) {
+            contentType = "application/octet-stream";
+        }
+
         return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_TYPE, "image/jpeg")
+                .header(HttpHeaders.CONTENT_TYPE, contentType)
                 .body(resource);
     }
 }

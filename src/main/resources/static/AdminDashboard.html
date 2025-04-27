@@ -3,32 +3,50 @@
 <head>
     <title>Admin Dashboard</title>
     <style>
-        body { font-family: Arial; margin: 0; padding: 20px; }
-        .header { display: flex; justify-content: space-between; margin-bottom: 20px; }
-        table { width: 100%; border-collapse: collapse; }
-        th, td { padding: 8px; text-align: left; border-bottom: 1px solid #ddd; }
-        th { background-color: #f2f2f2; }
-        .btn { padding: 5px 10px; margin-right: 5px; cursor: pointer; }
+        body { font-family: Arial; margin: 0; padding: 20px; background-color: #f5f5f5; }
+        .header { display: flex; justify-content: space-between; margin-bottom: 20px; padding: 15px; background-color: #4CAF50; color: white; border-radius: 5px; }
+        .header h1 { margin: 0; }
+        .header button { background-color: white; color: #4CAF50; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        .header button:hover { background-color: #f1f1f1; }
+        table { width: 100%; border-collapse: collapse; background-color: white; border-radius: 5px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #ddd; }
+        th { background-color: #4CAF50; color: white; font-weight: normal; }
+        tr:hover { background-color: #f8f8f8; }
+        .btn { padding: 6px 12px; margin-right: 5px; cursor: pointer; border: none; border-radius: 4px; }
+        .edit-btn { background-color: #2196F3; color: white; }
+        .delete-btn { background-color: #f44336; color: white; }
+        .btn:hover { opacity: 0.8; }
         .modal { display: none; position: fixed; z-index: 1; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.4); }
-        .modal-content { background-color: #fefefe; margin: 15% auto; padding: 20px; border: 1px solid #888; width: 80%; max-width: 500px; }
+        .modal-content { background-color: #fefefe; margin: 5% auto; padding: 20px; border-radius: 5px; width: 80%; max-width: 500px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
         .close { color: #aaa; float: right; font-size: 28px; font-weight: bold; cursor: pointer; }
+        .close:hover { color: #555; }
         .form-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 5px; }
-        input { width: 100%; padding: 8px; box-sizing: border-box; }
-        .save-btn { background-color: #4CAF50; color: white; border: none; padding: 10px 15px; cursor: pointer; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; color: #333; }
+        input, select { width: 100%; padding: 10px; box-sizing: border-box; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; }
+        input:focus, select:focus { border-color: #4CAF50; outline: none; }
+        .save-btn { background-color: #4CAF50; color: white; border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; width: 100%; font-size: 16px; }
+        .save-btn:hover { background-color: #45a049; }
+        .product-image { max-width: 80px; max-height: 80px; object-fit: cover; border-radius: 4px; }
+        .price-column { color: #4CAF50; font-weight: bold; }
+        .stock-column { color: #2196F3; }
+        .image-preview-container { margin-top: 10px; text-align: center; }
+        .image-preview { max-width: 100%; max-height: 200px; margin-top: 10px; border-radius: 4px; display: block; margin: 0 auto; border: 1px solid #ddd; }
     </style>
 </head>
 <body>
 <div class="header">
     <h1>Admin Dashboard</h1>
-    <button onclick="window.location.href='/uploadProduct.html'">upload product</button>
-    <button onclick="window.location.href='/login.html'">Logout</button>
+    <div>
+        <button onclick="window.location.href='/uploadProduct.html'" style="margin-right: 10px;">Upload Product</button>
+        <button onclick="window.location.href='/login.html'">Logout</button>
+    </div>
 </div>
 
 <h2>Daftar Produk</h2>
 <table id="productTable">
     <tr>
         <th>ID</th>
+        <th>Gambar</th>
         <th>Nama</th>
         <th>Kategori</th>
         <th>Harga</th>
@@ -45,6 +63,7 @@
         <h2>Edit Produk</h2>
         <form id="editForm">
             <input type="hidden" id="productId">
+            <input type="hidden" id="productImageUrl">
             <div class="form-group">
                 <label for="productName">Nama Produk:</label>
                 <input type="text" id="productName" required>
@@ -61,7 +80,14 @@
                 <label for="productCategory">Kategori:</label>
                 <input type="text" id="productCategory" required>
             </div>
-            <button type="submit" class="save-btn">Simpan</button>
+            <div class="form-group">
+                <label>Gambar Produk:</label>
+                <div class="image-preview-container">
+                    <img id="productImagePreview" class="image-preview" src="" alt="Preview Gambar">
+                </div>
+                <p style="font-size: 12px; color: #666; margin-top: 5px;">*Gambar tidak dapat diubah pada form edit. Untuk mengubah gambar, silakan hapus produk dan upload ulang.</p>
+            </div>
+            <button type="submit" class="save-btn">Simpan Perubahan</button>
         </form>
     </div>
 </div>
@@ -82,20 +108,36 @@
             products.forEach(product => {
                 const row = table.insertRow();
                 row.insertCell(0).textContent = product.id;
-                row.insertCell(1).textContent = product.name;
-                row.insertCell(2).textContent = product.category;
-                row.insertCell(3).textContent = `Rp ${product.price}`;
-                row.insertCell(4).textContent = product.quantity;
 
-                const actionCell = row.insertCell(5);
+                // Image cell
+                const imageCell = row.insertCell(1);
+                const img = document.createElement('img');
+                img.src = product.imageUrl;
+                img.alt = product.name;
+                img.className = 'product-image';
+                imageCell.appendChild(img);
+
+                row.insertCell(2).textContent = product.name;
+                row.insertCell(3).textContent = product.category;
+
+                const priceCell = row.insertCell(4);
+                priceCell.textContent = `Rp ${product.price.toLocaleString('id-ID')}`;
+                priceCell.className = 'price-column';
+
+                const stockCell = row.insertCell(5);
+                stockCell.textContent = product.quantity;
+                stockCell.className = 'stock-column';
+
+                const actionCell = row.insertCell(6);
+
                 const editBtn = document.createElement('button');
                 editBtn.textContent = 'Edit';
-                editBtn.className = 'btn';
+                editBtn.className = 'btn edit-btn';
                 editBtn.onclick = () => openEditModal(product);
 
                 const deleteBtn = document.createElement('button');
                 deleteBtn.textContent = 'Hapus';
-                deleteBtn.className = 'btn';
+                deleteBtn.className = 'btn delete-btn';
                 deleteBtn.onclick = () => deleteProduct(product.id);
 
                 actionCell.appendChild(editBtn);
@@ -103,6 +145,7 @@
             });
         } catch (error) {
             console.error('Error loading products:', error);
+            alert('Gagal memuat data produk. Silakan refresh halaman.');
         }
     }
 
@@ -113,6 +156,8 @@
         document.getElementById('productPrice').value = product.price;
         document.getElementById('productQuantity').value = product.quantity;
         document.getElementById('productCategory').value = product.category;
+        document.getElementById('productImageUrl').value = product.imageUrl;
+        document.getElementById('productImagePreview').src = product.imageUrl;
 
         document.getElementById('editModal').style.display = 'block';
     }
@@ -131,6 +176,7 @@
         const price = parseFloat(document.getElementById('productPrice').value);
         const quantity = parseInt(document.getElementById('productQuantity').value);
         const category = document.getElementById('productCategory').value;
+        const imageUrl = document.getElementById('productImageUrl').value;
 
         try {
             const response = await fetch(`/product/${id}`, {
@@ -142,7 +188,8 @@
                     name,
                     price,
                     quantity,
-                    category
+                    category,
+                    imageUrl // Tambahkan imageUrl ke request
                 })
             });
 
@@ -151,7 +198,8 @@
                 loadProducts();
                 alert('Produk berhasil diperbarui!');
             } else {
-                alert('Gagal memperbarui produk. Silakan coba lagi.');
+                const errorText = await response.text();
+                alert(`Gagal memperbarui produk: ${errorText}`);
             }
         } catch (error) {
             console.error('Error updating product:', error);
@@ -171,7 +219,8 @@
                     loadProducts();
                     alert('Produk berhasil dihapus!');
                 } else {
-                    alert('Gagal menghapus produk. Silakan coba lagi.');
+                    const errorText = await response.text();
+                    alert(`Gagal menghapus produk: ${errorText}`);
                 }
             } catch (error) {
                 console.error('Error deleting product:', error);

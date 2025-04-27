@@ -31,9 +31,9 @@
         if (resultText.includes("Login berhasil")) {
             // Cek role
             if (resultText.includes("ROLE:ADMIN")) {
-                window.location.href = "/adminDashboard.html";
+                window.location.href = "/AdminDashboard.html";
             } else {
-                window.location.href = "/dashboardPrototype.html";
+                window.location.href = "/Dashboard.html";
             }
         } else {
             document.getElementById("result").innerText = resultText;

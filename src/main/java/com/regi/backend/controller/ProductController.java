@@ -14,6 +14,7 @@ import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -40,12 +41,18 @@ public class ProductController {
             @RequestParam("image_url") MultipartFile imageFile
     ) throws IOException {
 
-        String fileName = UUID.randomUUID() + "_" + StringUtils.cleanPath(Objects.requireNonNull(imageFile.getOriginalFilename()));
-        Path filePath = Paths.get(uploadDir, fileName);
-        Files.createDirectories(filePath.getParent());
-        Files.copy(imageFile.getInputStream(), filePath);
+        // Buat direktori uploads jika belum ada
+        Path uploadsDir = Paths.get("uploads");
+        if (!Files.exists(uploadsDir)) {
+            Files.createDirectories(uploadsDir);
+        }
 
-        String imageUrl = "/assets/" + fileName; // URL yang bisa diakses frontend
+        String fileName = UUID.randomUUID() + "_" + StringUtils.cleanPath(Objects.requireNonNull(imageFile.getOriginalFilename()));
+        Path filePath = uploadsDir.resolve(fileName);
+        Files.copy(imageFile.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+
+        // Simpan URL relatif untuk diakses melalui ImageController
+        String imageUrl = "/images/" + fileName;
 
         Product product = new Product();
         product.setName(name);
