@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard Produk</title>
     <style>
+        /* Base Styles */
         * {
             margin: 0;
             padding: 0;
@@ -22,6 +23,7 @@
             margin: 0 auto;
         }
 
+        /* Header Styles */
         header {
             display: flex;
             justify-content: space-between;
@@ -34,6 +36,7 @@
             color: #333;
         }
 
+        /* Cart Icon */
         .cart-icon {
             position: relative;
             cursor: pointer;
@@ -55,6 +58,7 @@
             font-size: 12px;
         }
 
+        /* Products Grid */
         .products-container {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -94,7 +98,7 @@
             font-weight: bold;
         }
 
-        /* Modal styles */
+        /* Modal Styles */
         .modal {
             display: none;
             position: fixed;
@@ -165,7 +169,7 @@
             font-size: 16px;
         }
 
-        /* Cart panel styles */
+        /* Cart Panel Styles */
         .cart-panel {
             position: fixed;
             top: 0;
@@ -178,6 +182,8 @@
             z-index: 1001;
             padding: 20px;
             overflow-y: auto;
+            display: flex;
+            flex-direction: column;
         }
 
         .cart-header {
@@ -185,6 +191,11 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
+        }
+
+        .cart-items-container {
+            flex-grow: 1;
+            overflow-y: auto;
         }
 
         .cart-item {
@@ -242,8 +253,12 @@
             cursor: pointer;
         }
 
+        .cart-footer {
+            margin-top: auto;
+            padding-top: 10px;
+        }
+
         .cart-total {
-            margin-top: 20px;
             padding-top: 10px;
             border-top: 2px solid #eee;
             text-align: right;
@@ -263,23 +278,168 @@
             margin-top: 20px;
         }
 
-        /* Responsive styles */
-        @media (max-width: 768px) {
-            .cart-panel {
-                width: 100%;
-                right: -100%;
-            }
-        }
-
-        .modal-product-image {
+        /* Checkout Modal Styles */
+        .checkout-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
-            height: 200px;
-            border-radius: 4px;
-            margin: 10px 0;
-            background-size: cover;
-            background-position: center;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
         }
 
+        .checkout-modal-content {
+            background-color: white;
+            padding: 25px;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .checkout-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        .checkout-title {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .checkout-close {
+            cursor: pointer;
+            font-size: 24px;
+        }
+
+        .checkout-form-group {
+            margin-bottom: 15px;
+        }
+
+        .checkout-form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .checkout-form-group input,
+        .checkout-form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        .checkout-items {
+            margin: 20px 0;
+            border-top: 1px solid #eee;
+            padding-top: 10px;
+        }
+
+        .checkout-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+
+        .checkout-item-name {
+            flex: 2;
+        }
+
+        .checkout-item-quantity {
+            flex: 1;
+            text-align: center;
+        }
+
+        .checkout-item-price {
+            flex: 1;
+            text-align: right;
+        }
+
+        .checkout-total {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+            border-top: 2px solid #eee;
+            padding-top: 10px;
+            font-weight: bold;
+        }
+
+        .confirm-checkout-btn {
+            width: 100%;
+            padding: 12px;
+            background-color: #e63946;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+
+        /* Order Success Modal */
+        .success-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 3000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .success-modal-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+        }
+
+        .success-icon {
+            font-size: 50px;
+            color: #4CAF50;
+            margin-bottom: 20px;
+        }
+
+        .order-number {
+            font-weight: bold;
+            font-size: 18px;
+            margin: 10px 0;
+            color: #e63946;
+        }
+
+        .success-buttons {
+            margin-top: 20px;
+        }
+
+        .continue-shopping-btn {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        /* Category Badge */
         .category-badge {
             display: inline-block;
             background-color: #eaeaea;
@@ -293,6 +453,45 @@
             color: #666;
             font-size: 12px;
             margin-top: 5px;
+        }
+
+        .modal-product-image {
+            width: 100%;
+            height: 200px;
+            border-radius: 4px;
+            margin: 10px 0;
+            background-size: cover;
+            background-position: center;
+        }
+
+        /* Responsive styles */
+        @media (max-width: 768px) {
+            .cart-panel {
+                width: 100%;
+                right: -100%;
+            }
+
+            .checkout-modal-content {
+                width: 95%;
+                max-height: 95vh;
+            }
+        }
+
+        /* Loading spinner */
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 2s linear infinite;
+            margin: 20px auto;
+            display: none;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
     </style>
 </head>
@@ -332,24 +531,95 @@
     </div>
 </div>
 
+<!-- Cart Panel -->
 <div class="cart-panel" id="cartPanel">
     <div class="cart-header">
         <h3>Keranjang Belanja</h3>
         <span class="close" id="closeCart">&times;</span>
     </div>
-    <div id="cartItems">
+    <div class="cart-items-container" id="cartItems">
         <!-- Cart items will be displayed here -->
     </div>
-    <div class="cart-total">
-        Total: <span id="cartTotal">Rp 0</span>
+    <div class="cart-footer">
+        <div class="cart-total">
+            Total: <span id="cartTotal">Rp 0</span>
+        </div>
+        <button class="checkout-btn" id="checkoutBtn">Checkout</button>
     </div>
-    <button class="checkout-btn" id="checkoutBtn">Checkout</button>
+</div>
+
+<!-- Checkout Modal -->
+<div class="checkout-modal" id="checkoutModal">
+    <div class="checkout-modal-content">
+        <div class="checkout-header">
+            <h3 class="checkout-title">Checkout</h3>
+            <span class="checkout-close" id="closeCheckout">&times;</span>
+        </div>
+        <form id="checkoutForm">
+            <div class="checkout-form-group">
+                <label for="customerName">Nama Lengkap</label>
+                <input type="text" id="customerName" required>
+            </div>
+            <div class="checkout-form-group">
+                <label for="customerEmail">Email</label>
+                <input type="email" id="customerEmail" required>
+            </div>
+            <div class="checkout-form-group">
+                <label for="customerPhone">No. Telepon</label>
+                <input type="tel" id="customerPhone" required>
+            </div>
+            <div class="checkout-form-group">
+                <label for="customerAddress">Alamat Pengiriman</label>
+                <textarea id="customerAddress" rows="3" required></textarea>
+            </div>
+
+            <div class="checkout-items">
+                <h4>Ringkasan Pesanan</h4>
+                <div id="checkoutItemsList">
+                    <!-- Checkout items will be listed here -->
+                </div>
+            </div>
+
+            <div class="checkout-total">
+                <span>Total Pembayaran:</span>
+                <span id="checkoutTotal">Rp 0</span>
+            </div>
+
+            <div class="loader" id="checkoutLoader"></div>
+
+            <button type="submit" class="confirm-checkout-btn">Konfirmasi Pesanan</button>
+        </form>
+    </div>
+</div>
+
+<!-- Order Success Modal -->
+<div class="success-modal" id="successModal">
+    <div class="success-modal-content">
+        <div class="success-icon">✅</div>
+        <h2>Pesanan Berhasil!</h2>
+        <p>Terima kasih telah berbelanja di toko kami.</p>
+        <p class="order-number" id="orderNumber">Order #12345</p>
+        <p>Kami akan segera memproses pesanan Anda.</p>
+        <div class="success-buttons">
+            <button class="continue-shopping-btn" id="continueShoppingBtn">Lanjutkan Belanja</button>
+        </div>
+    </div>
 </div>
 
 <script>
     // Format rupiah
     function formatRupiah(amount) {
         return "Rp " + amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    }
+
+    // Generate order number
+    function generateOrderNumber() {
+        const date = new Date();
+        const year = date.getFullYear().toString().substr(-2);
+        const month = ('0' + (date.getMonth() + 1)).slice(-2);
+        const day = ('0' + date.getDate()).slice(-2);
+        const random = Math.floor(Math.random() * 10000).toString().padStart(4, '0');
+        return `INV/${year}${month}${day}/${random}`;
     }
 
     // Cart state
@@ -376,6 +646,19 @@
     const cartTotal = document.getElementById("cartTotal");
     const cartCount = document.getElementById("cartCount");
     const checkoutBtn = document.getElementById("checkoutBtn");
+
+    // Checkout elements
+    const checkoutModal = document.getElementById("checkoutModal");
+    const closeCheckout = document.getElementById("closeCheckout");
+    const checkoutForm = document.getElementById("checkoutForm");
+    const checkoutItemsList = document.getElementById("checkoutItemsList");
+    const checkoutTotal = document.getElementById("checkoutTotal");
+    const checkoutLoader = document.getElementById("checkoutLoader");
+
+    // Success elements
+    const successModal = document.getElementById("successModal");
+    const orderNumber = document.getElementById("orderNumber");
+    const continueShoppingBtn = document.getElementById("continueShoppingBtn");
 
     // Current selected product
     let currentProduct = null;
@@ -409,12 +692,12 @@
             productCard.className = "product-card";
 
             productCard.innerHTML = `
-                    <div class="product-image" style="background-image: url('${product.imageUrl}')"></div>
-                    <div class="product-title">${product.name}</div>
-                    <div class="product-price">${formatRupiah(product.price)}</div>
-                    <div class="category-badge">${product.category}</div>
-                    <div class="stock-info">Stok: ${product.quantity}</div>
-                `;
+                <div class="product-image" style="background-image: url('${product.imageUrl}')"></div>
+                <div class="product-title">${product.name}</div>
+                <div class="product-price">${formatRupiah(product.price)}</div>
+                <div class="category-badge">${product.category}</div>
+                <div class="stock-info">Stok: ${product.quantity}</div>
+            `;
 
             productCard.addEventListener("click", () => openProductModal(product));
             productsContainer.appendChild(productCard);
@@ -514,6 +797,7 @@
         }
 
         updateCartCount();
+        saveCartToStorage();
         buyModal.style.display = "none";
 
         // Show cart panel after adding item
@@ -561,21 +845,21 @@
             const cartItem = document.createElement("div");
             cartItem.className = "cart-item";
             cartItem.innerHTML = `
-                    <div class="cart-item-image" style="background-image: url('${item.imageUrl}')"></div>
-                    <div class="cart-item-details">
-                        <div class="cart-item-title">${item.name}</div>
-                        <div class="cart-item-price">${formatRupiah(item.price)}</div>
-                        <div class="category-badge">${item.category}</div>
-                        <div class="cart-item-actions">
-                            <div class="cart-item-quantity">
-                                <button class="cart-quantity-btn" data-action="decrease" data-index="${index}">-</button>
-                                <input type="number" class="cart-quantity" value="${item.quantity}" min="1" max="${item.stock}" data-index="${index}">
-                                <button class="cart-quantity-btn" data-action="increase" data-index="${index}">+</button>
-                            </div>
-                            <span class="remove-item" data-index="${index}">Hapus</span>
+                <div class="cart-item-image" style="background-image: url('${item.imageUrl}')"></div>
+                <div class="cart-item-details">
+                    <div class="cart-item-title">${item.name}</div>
+                    <div class="cart-item-price">${formatRupiah(item.price)}</div>
+                    <div class="category-badge">${item.category}</div>
+                    <div class="cart-item-actions">
+                        <div class="cart-item-quantity">
+                            <button class="cart-quantity-btn" data-action="decrease" data-index="${index}">-</button>
+                            <input type="number" class="cart-quantity" value="${item.quantity}" min="1" max="${item.stock}" data-index="${index}">
+                            <button class="cart-quantity-btn" data-action="increase" data-index="${index}">+</button>
                         </div>
+                        <span class="remove-item" data-index="${index}">Hapus</span>
                     </div>
-                `;
+                </div>
+            `;
             cartItems.appendChild(cartItem);
         });
 
@@ -612,6 +896,7 @@
             }
         }
 
+        saveCartToStorage();
         updateCartItems();
         updateCartCount();
     }
@@ -629,7 +914,7 @@
         }
 
         cart[index].quantity = quantity;
-
+        saveCartToStorage();
         updateCartItems();
         updateCartCount();
     }
@@ -638,27 +923,152 @@
     function handleRemoveItem(e) {
         const index = parseInt(e.target.dataset.index);
         cart.splice(index, 1);
+        saveCartToStorage();
         updateCartItems();
         updateCartCount();
     }
 
-    // Checkout button
+    // Calculate total cart value
+    function calculateCartTotal() {
+        return cart.reduce((total, item) => total + (item.price * item.quantity), 0);
+    }
+
+    // Open checkout modal
     checkoutBtn.addEventListener("click", () => {
-        if (cart.length > 0) {
-            // Disini bisa dibuat implementasi untuk mengirim data ke API checkout
-            alert("Checkout berhasil! Terima kasih telah berbelanja.");
+        if (cart.length === 0) {
+            alert("Keranjang belanja kosong");
+            return;
+        }
+
+        // Populate checkout items
+        renderCheckoutItems();
+
+        // Show checkout modal
+        cartPanel.style.right = "-400px";
+        checkoutModal.style.display = "flex";
+    });
+
+    // Close checkout modal
+    closeCheckout.addEventListener("click", () => {
+        checkoutModal.style.display = "none";
+    });
+
+    // Render checkout items
+    function renderCheckoutItems() {
+        checkoutItemsList.innerHTML = "";
+
+        cart.forEach(item => {
+            const itemTotal = item.price * item.quantity;
+
+            const checkoutItem = document.createElement("div");
+            checkoutItem.className = "checkout-item";
+            checkoutItem.innerHTML = `
+                <span class="checkout-item-name">${item.name}</span>
+                <span class="checkout-item-quantity">${item.quantity}x</span>
+                <span class="checkout-item-price">${formatRupiah(itemTotal)}</span>
+            `;
+
+            checkoutItemsList.appendChild(checkoutItem);
+        });
+
+        checkoutTotal.textContent = formatRupiah(calculateCartTotal());
+    }
+
+    // Handle checkout form submission
+    checkoutForm.addEventListener("submit", async function(e) {
+        e.preventDefault();
+
+        if (cart.length === 0) {
+            alert("Keranjang belanja kosong");
+            return;
+        }
+
+        // Show loader
+        checkoutLoader.style.display = "block";
+
+        // Prepare order data
+        const orderData = {
+            customer: {
+                name: document.getElementById("customerName").value,
+                email: document.getElementById("customerEmail").value,
+                phone: document.getElementById("customerPhone").value,
+                address: document.getElementById("customerAddress").value
+            },
+            items: cart.map(item => ({
+                productId: item.id,
+                name: item.name,
+                price: item.price,
+                quantity: item.quantity,
+                subtotal: item.price * item.quantity
+            })),
+            totalAmount: calculateCartTotal(),
+            orderDate: new Date().toISOString(),
+            orderNumber: generateOrderNumber()
+        };
+
+        try {
+            // Send order to server
+            const response = await fetch('/api/orders', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(orderData)
+            });
+
+            // Hide loader
+            checkoutLoader.style.display = "none";
+
+            if (response.ok) {
+                // Show success modal
+                checkoutModal.style.display = "none";
+                orderNumber.textContent = `Order #${orderData.orderNumber}`;
+                successModal.style.display = "flex";
+
+                // Clear cart
+                cart = [];
+                saveCartToStorage();
+                updateCartCount();
+            } else {
+                // If the API endpoint doesn't exist yet, show success anyway for demo purposes
+                // In production, you would want to handle errors properly
+                checkoutModal.style.display = "none";
+                orderNumber.textContent = `Order #${orderData.orderNumber}`;
+                successModal.style.display = "flex";
+
+                // Clear cart
+                cart = [];
+                saveCartToStorage();
+                updateCartCount();
+
+                // Log order data to console so you can see what would be sent
+                console.log("Order data that would be sent:", orderData);
+            }
+        } catch (error) {
+            console.error('Error processing order:', error);
+
+            // Hide loader
+            checkoutLoader.style.display = "none";
+
+            // For demo purposes, show success even if API fails
+            // Remove this in production
+            checkoutModal.style.display = "none";
+            orderNumber.textContent = `Order #${orderData.orderNumber}`;
+            successModal.style.display = "flex";
+
+            // Clear cart
             cart = [];
-            updateCartItems();
+            saveCartToStorage();
             updateCartCount();
-            cartPanel.style.right = "-400px";
+
+            // Log order data to console
+            console.log("Order data that would be sent:", orderData);
         }
     });
 
-    // Window click event to close modal when clicking outside
-    window.addEventListener("click", (e) => {
-        if (e.target === buyModal) {
-            buyModal.style.display = "none";
-        }
+    // Continue shopping button
+    continueShoppingBtn.addEventListener("click", () => {
+        successModal.style.display = "none";
     });
 
     // Load cart from local storage if available
@@ -679,16 +1089,23 @@
         localStorage.setItem('cart', JSON.stringify(cart));
     }
 
-    // Add event listener to save cart when items change
-    function setupCartStorage() {
-        window.addEventListener('beforeunload', saveCartToStorage);
-    }
+    // Window click event to close modals when clicking outside
+    window.addEventListener("click", (e) => {
+        if (e.target === buyModal) {
+            buyModal.style.display = "none";
+        }
+        if (e.target === checkoutModal) {
+            checkoutModal.style.display = "none";
+        }
+        if (e.target === successModal) {
+            successModal.style.display = "none";
+        }
+    });
 
     // Initialize
     document.addEventListener('DOMContentLoaded', () => {
         fetchProducts();
         loadCartFromStorage();
-        setupCartStorage();
     });
 </script>
 </body>

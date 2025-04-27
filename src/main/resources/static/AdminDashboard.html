@@ -3,63 +3,480 @@
 <head>
     <title>Admin Dashboard</title>
     <style>
-        body { font-family: Arial; margin: 0; padding: 20px; background-color: #f5f5f5; }
-        .header { display: flex; justify-content: space-between; margin-bottom: 20px; padding: 15px; background-color: #4CAF50; color: white; border-radius: 5px; }
-        .header h1 { margin: 0; }
-        .header button { background-color: white; color: #4CAF50; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; }
-        .header button:hover { background-color: #f1f1f1; }
-        table { width: 100%; border-collapse: collapse; background-color: white; border-radius: 5px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #ddd; }
-        th { background-color: #4CAF50; color: white; font-weight: normal; }
-        tr:hover { background-color: #f8f8f8; }
-        .btn { padding: 6px 12px; margin-right: 5px; cursor: pointer; border: none; border-radius: 4px; }
-        .edit-btn { background-color: #2196F3; color: white; }
-        .delete-btn { background-color: #f44336; color: white; }
-        .btn:hover { opacity: 0.8; }
-        .modal { display: none; position: fixed; z-index: 1; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.4); }
-        .modal-content { background-color: #fefefe; margin: 5% auto; padding: 20px; border-radius: 5px; width: 80%; max-width: 500px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
-        .close { color: #aaa; float: right; font-size: 28px; font-weight: bold; cursor: pointer; }
-        .close:hover { color: #555; }
-        .form-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 5px; font-weight: bold; color: #333; }
-        input, select { width: 100%; padding: 10px; box-sizing: border-box; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; }
-        input:focus, select:focus { border-color: #4CAF50; outline: none; }
-        .save-btn { background-color: #4CAF50; color: white; border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; width: 100%; font-size: 16px; }
-        .save-btn:hover { background-color: #45a049; }
-        .product-image { max-width: 80px; max-height: 80px; object-fit: cover; border-radius: 4px; }
-        .price-column { color: #4CAF50; font-weight: bold; }
-        .stock-column { color: #2196F3; }
-        .image-preview-container { margin-top: 10px; text-align: center; }
-        .image-preview { max-width: 100%; max-height: 200px; margin-top: 10px; border-radius: 4px; display: block; margin: 0 auto; border: 1px solid #ddd; }
+        /* Base Styles */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+
+        /* Header Styles */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #4CAF50;
+            color: white;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .header-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .header button {
+            background-color: white;
+            color: #4CAF50;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+
+        .header button:hover {
+            background-color: #f1f1f1;
+        }
+
+        /* Tab Styles */
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #4CAF50;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            background-color: #e0e0e0;
+            cursor: pointer;
+            border-radius: 5px 5px 0 0;
+            margin-right: 5px;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Table Styles */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: white;
+            border-radius: 5px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #4CAF50;
+            color: white;
+            font-weight: normal;
+        }
+
+        tr:hover {
+            background-color: #f8f8f8;
+        }
+
+        .price-column {
+            color: #4CAF50;
+            font-weight: bold;
+        }
+
+        .stock-column {
+            color: #2196F3;
+        }
+
+        .product-image {
+            max-width: 80px;
+            max-height: 80px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .status-PENDING {
+            background-color: #FFC107;
+            color: #000;
+        }
+
+        .status-PROCESSING {
+            background-color: #2196F3;
+            color: white;
+        }
+
+        .status-SHIPPED {
+            background-color: #9C27B0;
+            color: white;
+        }
+
+        .status-DELIVERED {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .status-CANCELLED {
+            background-color: #F44336;
+            color: white;
+        }
+
+        /* Button Styles */
+        .btn {
+            padding: 6px 12px;
+            margin-right: 5px;
+            cursor: pointer;
+            border: none;
+            border-radius: 4px;
+            transition: opacity 0.3s;
+        }
+
+        .btn:hover {
+            opacity: 0.8;
+        }
+
+        .edit-btn {
+            background-color: #2196F3;
+            color: white;
+        }
+
+        .delete-btn {
+            background-color: #f44336;
+            color: white;
+        }
+
+        .detail-btn {
+            background-color: #9C27B0;
+            color: white;
+        }
+
+        .save-btn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+        }
+
+        .save-btn:hover {
+            background-color: #45a049;
+        }
+
+        .status-btn {
+            border: 1px solid #ddd;
+            background-color: white;
+            border-radius: 4px;
+            padding: 5px 10px;
+            cursor: pointer;
+            margin-right: 5px;
+            transition: all 0.3s;
+        }
+
+        .status-btn:hover {
+            border-color: #4CAF50;
+        }
+
+        .status-btn.active {
+            background-color: #4CAF50;
+            color: white;
+            border-color: #4CAF50;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.4);
+            overflow: auto;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border-radius: 5px;
+            width: 80%;
+            max-width: 500px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .modal-content.large {
+            max-width: 800px;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: #555;
+        }
+
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        input:focus, select:focus {
+            border-color: #4CAF50;
+            outline: none;
+            box-shadow: 0 0 3px rgba(76, 175, 80, 0.3);
+        }
+
+        /* Image Preview Styles */
+        .image-preview-container {
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        .image-preview {
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: 4px;
+            display: block;
+            margin: 0 auto;
+            border: 1px solid #ddd;
+        }
+
+        /* Order Detail Styles */
+        .order-detail-section {
+            margin-bottom: 20px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 15px;
+        }
+
+        .order-detail-section:last-child {
+            border-bottom: none;
+        }
+
+        .order-detail-section h3 {
+            margin-top: 0;
+            color: #4CAF50;
+        }
+
+        .order-info {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .order-info-item {
+            margin-bottom: 10px;
+        }
+
+        .order-info-label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 3px;
+            color: #666;
+        }
+
+        .order-info-value {
+            color: #333;
+            word-break: break-word;
+        }
+
+        .order-items-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        .order-items-table th,
+        .order-items-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        .order-items-table th {
+            background-color: #f5f5f5;
+            color: #333;
+        }
+
+        .item-price,
+        .item-subtotal {
+            text-align: right;
+        }
+
+        .order-total {
+            text-align: right;
+            margin-top: 15px;
+            font-weight: bold;
+            font-size: 16px;
+            color: #4CAF50;
+        }
+
+        .status-update-section {
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        }
+
+        .status-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .header div {
+                margin-top: 10px;
+            }
+
+            .modal-content {
+                width: 95%;
+                margin: 10% auto;
+            }
+
+            .order-info {
+                grid-template-columns: 1fr;
+            }
+
+            .tabs {
+                flex-direction: column;
+                border-bottom: none;
+            }
+
+            .tab {
+                border-radius: 4px;
+                margin-bottom: 5px;
+            }
+        }
+
+        /* No Data Message */
+        .no-data-message {
+            text-align: center;
+            padding: 30px;
+            background-color: white;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            color: #666;
+        }
     </style>
 </head>
 <body>
 <div class="header">
     <h1>Admin Dashboard</h1>
-    <div>
-        <button onclick="window.location.href='/uploadProduct.html'" style="margin-right: 10px;">Upload Product</button>
+    <div class="header-buttons">
+        <button onclick="window.location.href='/uploadProduct.html'">Upload Product</button>
         <button onclick="window.location.href='/login.html'">Logout</button>
     </div>
 </div>
 
-<h2>Daftar Produk</h2>
-<table id="productTable">
-    <tr>
-        <th>ID</th>
-        <th>Gambar</th>
-        <th>Nama</th>
-        <th>Kategori</th>
-        <th>Harga</th>
-        <th>Stok</th>
-        <th>Aksi</th>
-    </tr>
-    <!-- Data produk akan ditampilkan di sini -->
-</table>
+<div class="tabs">
+    <div class="tab active" data-tab="products">Produk</div>
+    <div class="tab" data-tab="orders">Pesanan</div>
+</div>
+
+<!-- Products Tab -->
+<div class="tab-content active" id="products-tab">
+    <h2>Daftar Produk</h2>
+    <table id="productTable">
+        <tr>
+            <th>ID</th>
+            <th>Gambar</th>
+            <th>Nama</th>
+            <th>Kategori</th>
+            <th>Harga</th>
+            <th>Stok</th>
+            <th>Aksi</th>
+        </tr>
+        <!-- Data produk akan ditampilkan di sini -->
+    </table>
+</div>
+
+<!-- Orders Tab -->
+<div class="tab-content" id="orders-tab">
+    <h2>Daftar Pesanan</h2>
+    <table id="orderTable">
+        <tr>
+            <th>ID</th>
+            <th>Nomor Pesanan</th>
+            <th>Tanggal</th>
+            <th>Pelanggan</th>
+            <th>Total</th>
+            <th>Status</th>
+            <th>Aksi</th>
+        </tr>
+        <!-- Data pesanan akan ditampilkan di sini -->
+    </table>
+</div>
 
 <!-- Modal Edit Produk -->
 <div id="editModal" class="modal">
     <div class="modal-content">
-        <span class="close" onclick="closeModal()">&times;</span>
+        <span class="close" onclick="closeModal('editModal')">&times;</span>
         <h2>Edit Produk</h2>
         <form id="editForm">
             <input type="hidden" id="productId">
@@ -92,8 +509,109 @@
     </div>
 </div>
 
+<!-- Modal Detail Pesanan -->
+<div id="orderDetailModal" class="modal">
+    <div class="modal-content large">
+        <span class="close" onclick="closeModal('orderDetailModal')">&times;</span>
+        <h2>Detail Pesanan</h2>
+
+        <div class="order-detail-section">
+            <h3>Informasi Pesanan</h3>
+            <div class="order-info" id="orderInfo">
+                <!-- Informasi pesanan akan ditampilkan di sini -->
+            </div>
+        </div>
+
+        <div class="order-detail-section">
+            <h3>Informasi Pelanggan</h3>
+            <div class="order-info" id="customerInfo">
+                <!-- Informasi pelanggan akan ditampilkan di sini -->
+            </div>
+        </div>
+
+        <div class="order-detail-section">
+            <h3>Item Pesanan</h3>
+            <table class="order-items-table" id="orderItemsTable">
+                <thead>
+                <tr>
+                    <th>Produk</th>
+                    <th>Harga</th>
+                    <th>Jumlah</th>
+                    <th>Subtotal</th>
+                </tr>
+                </thead>
+                <tbody>
+                <!-- Item pesanan akan ditampilkan di sini -->
+                </tbody>
+            </table>
+            <div class="order-total" id="orderTotal">
+                Total: Rp 0
+            </div>
+        </div>
+
+        <div class="status-update-section">
+            <h3>Update Status Pesanan</h3>
+            <div class="status-controls" id="statusControls">
+                <button class="status-btn" data-status="PENDING">Pending</button>
+                <button class="status-btn" data-status="PROCESSING">Processing</button>
+                <button class="status-btn" data-status="SHIPPED">Shipped</button>
+                <button class="status-btn" data-status="DELIVERED">Delivered</button>
+                <button class="status-btn" data-status="CANCELLED">Cancelled</button>
+            </div>
+        </div>
+
+        <div style="margin-top: 20px;">
+            <button class="delete-btn" id="deleteOrderBtn" style="padding: 10px 15px; width: 100%;">Hapus Pesanan</button>
+        </div>
+    </div>
+</div>
+
 <script>
-    // Load produk
+    /* Tab Functionality */
+    document.querySelectorAll('.tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+            // Remove active class from all tabs
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+
+            // Add active class to clicked tab
+            tab.classList.add('active');
+            document.getElementById(`${tab.dataset.tab}-tab`).classList.add('active');
+
+            // Load appropriate data
+            if (tab.dataset.tab === 'products') {
+                loadProducts();
+            } else if (tab.dataset.tab === 'orders') {
+                loadOrders();
+            }
+        });
+    });
+
+    /* Modal Functionality */
+    function closeModal(modalId) {
+        document.getElementById(modalId).style.display = 'none';
+    }
+
+    /* Format Rupiah */
+    function formatRupiah(amount) {
+        return "Rp " + amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    }
+
+    /* Format Date */
+    function formatDate(dateString) {
+        const options = {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        };
+        return new Date(dateString).toLocaleDateString('id-ID', options);
+    }
+
+    /* PRODUCTS TAB FUNCTIONALITY */
+
+    // Load products
     async function loadProducts() {
         try {
             const response = await fetch('/product');
@@ -103,6 +621,14 @@
             // Clear existing rows except header
             while (table.rows.length > 1) {
                 table.deleteRow(1);
+            }
+
+            if (products.length === 0) {
+                const row = table.insertRow();
+                const cell = row.insertCell(0);
+                cell.colSpan = 7;
+                cell.innerHTML = '<div class="no-data-message">Tidak ada produk yang tersedia.</div>';
+                return;
             }
 
             products.forEach(product => {
@@ -121,7 +647,7 @@
                 row.insertCell(3).textContent = product.category;
 
                 const priceCell = row.insertCell(4);
-                priceCell.textContent = `Rp ${product.price.toLocaleString('id-ID')}`;
+                priceCell.textContent = formatRupiah(product.price);
                 priceCell.className = 'price-column';
 
                 const stockCell = row.insertCell(5);
@@ -162,11 +688,6 @@
         document.getElementById('editModal').style.display = 'block';
     }
 
-    // Close modal
-    function closeModal() {
-        document.getElementById('editModal').style.display = 'none';
-    }
-
     // Update product
     async function updateProduct(event) {
         event.preventDefault();
@@ -189,12 +710,12 @@
                     price,
                     quantity,
                     category,
-                    imageUrl // Tambahkan imageUrl ke request
+                    imageUrl
                 })
             });
 
             if (response.ok) {
-                closeModal();
+                closeModal('editModal');
                 loadProducts();
                 alert('Produk berhasil diperbarui!');
             } else {
@@ -229,19 +750,249 @@
         }
     }
 
+    /* ORDERS TAB FUNCTIONALITY */
+
+    // Load orders
+    async function loadOrders() {
+        try {
+            const response = await fetch('/api/orders');
+            const orders = await response.json();
+
+            const table = document.getElementById('orderTable');
+            // Clear existing rows except header
+            while (table.rows.length > 1) {
+                table.deleteRow(1);
+            }
+
+            if (orders.length === 0) {
+                const row = table.insertRow();
+                const cell = row.insertCell(0);
+                cell.colSpan = 7;
+                cell.innerHTML = '<div class="no-data-message">Tidak ada pesanan yang tersedia.</div>';
+                return;
+            }
+
+            orders.forEach(order => {
+                const row = table.insertRow();
+                row.insertCell(0).textContent = order.id;
+                row.insertCell(1).textContent = order.orderNumber;
+
+                const dateCell = row.insertCell(2);
+                dateCell.textContent = formatDate(order.orderDate);
+
+                row.insertCell(3).textContent = order.customerName;
+
+                const totalCell = row.insertCell(4);
+                totalCell.textContent = formatRupiah(order.totalAmount);
+                totalCell.className = 'price-column';
+
+                const statusCell = row.insertCell(5);
+                const statusBadge = document.createElement('span');
+                statusBadge.className = `status-badge status-${order.status}`;
+                statusBadge.textContent = order.status;
+                statusCell.appendChild(statusBadge);
+
+                const actionCell = row.insertCell(6);
+
+                const detailBtn = document.createElement('button');
+                detailBtn.textContent = 'Detail';
+                detailBtn.className = 'btn detail-btn';
+                detailBtn.onclick = () => openOrderDetailModal(order.id);
+
+                const deleteBtn = document.createElement('button');
+                deleteBtn.textContent = 'Hapus';
+                deleteBtn.className = 'btn delete-btn';
+                deleteBtn.onclick = () => confirmDeleteOrder(order.id);
+
+                actionCell.appendChild(detailBtn);
+                actionCell.appendChild(deleteBtn);
+            });
+        } catch (error) {
+            console.error('Error loading orders:', error);
+            alert('Gagal memuat data pesanan. Silakan refresh halaman.');
+        }
+    }
+
+    // Current order ID for detail modal
+    let currentOrderId = null;
+
+    // Open order detail modal
+    async function openOrderDetailModal(orderId) {
+        try {
+            currentOrderId = orderId;
+            const response = await fetch(`/api/orders/${orderId}`);
+
+            if (!response.ok) {
+                throw new Error('Failed to fetch order details');
+            }
+
+            const order = await response.json();
+
+            // Populate order info
+            const orderInfo = document.getElementById('orderInfo');
+            orderInfo.innerHTML = `
+                <div class="order-info-item">
+                    <span class="order-info-label">ID Pesanan:</span>
+                    <span class="order-info-value">${order.id}</span>
+                </div>
+                <div class="order-info-item">
+                    <span class="order-info-label">Nomor Pesanan:</span>
+                    <span class="order-info-value">${order.orderNumber}</span>
+                </div>
+                <div class="order-info-item">
+                    <span class="order-info-label">Tanggal Pesanan:</span>
+                    <span class="order-info-value">${formatDate(order.orderDate)}</span>
+                </div>
+                <div class="order-info-item">
+                    <span class="order-info-label">Status:</span>
+                    <span class="order-info-value">
+                        <span class="status-badge status-${order.status}">${order.status}</span>
+                    </span>
+                </div>
+            `;
+
+            // Populate customer info
+            const customerInfo = document.getElementById('customerInfo');
+            customerInfo.innerHTML = `
+                <div class="order-info-item">
+                    <span class="order-info-label">Nama:</span>
+                    <span class="order-info-value">${order.customerName}</span>
+                </div>
+                <div class="order-info-item">
+                    <span class="order-info-label">Email:</span>
+                    <span class="order-info-value">${order.customerEmail || '-'}</span>
+                </div>
+                <div class="order-info-item">
+                    <span class="order-info-label">Telepon:</span>
+                    <span class="order-info-value">${order.customerPhone || '-'}</span>
+                </div>
+                <div class="order-info-item">
+                    <span class="order-info-label">Alamat:</span>
+                    <span class="order-info-value">${order.customerAddress || '-'}</span>
+                </div>
+            `;
+
+            // Populate order items
+            const orderItemsTableBody = document.querySelector('#orderItemsTable tbody');
+            orderItemsTableBody.innerHTML = '';
+
+            order.items.forEach(item => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${item.productName}</td>
+                    <td class="item-price">${formatRupiah(item.productPrice)}</td>
+                    <td>${item.quantity}</td>
+                    <td class="item-subtotal">${formatRupiah(item.subtotal)}</td>
+                `;
+                orderItemsTableBody.appendChild(row);
+            });
+
+            // Set total
+            document.getElementById('orderTotal').textContent = `Total: ${formatRupiah(order.totalAmount)}`;
+
+            // Set active status button
+            document.querySelectorAll('.status-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.dataset.status === order.status) {
+                    btn.classList.add('active');
+                }
+            });
+
+            // Setup status update buttons
+            setupStatusButtons(orderId, order.status);
+
+            // Setup delete order button
+            const deleteOrderBtn = document.getElementById('deleteOrderBtn');
+            deleteOrderBtn.onclick = () => confirmDeleteOrder(orderId);
+
+            document.getElementById('orderDetailModal').style.display = 'block';
+        } catch (error) {
+            console.error('Error loading order details:', error);
+            alert('Gagal memuat detail pesanan. Silakan coba lagi.');
+        }
+    }
+
+    // Setup status update buttons
+    function setupStatusButtons(orderId, currentStatus) {
+        document.querySelectorAll('.status-btn').forEach(btn => {
+            btn.onclick = async () => {
+                const newStatus = btn.dataset.status;
+                if (newStatus === currentStatus) return;
+
+                try {
+                    const response = await fetch(`/api/orders/${orderId}/status?status=${newStatus}`, {
+                        method: 'PUT'
+                    });
+
+                    if (response.ok) {
+                        // Update active status button
+                        document.querySelectorAll('.status-btn').forEach(b => b.classList.remove('active'));
+                        btn.classList.add('active');
+
+                        // Update status badge in detail modal
+                        const statusBadge = document.querySelector('#orderInfo .status-badge');
+                        statusBadge.className = `status-badge status-${newStatus}`;
+                        statusBadge.textContent = newStatus;
+
+                        alert('Status pesanan berhasil diperbarui!');
+                    } else {
+                        alert('Gagal memperbarui status pesanan.');
+                    }
+                } catch (error) {
+                    console.error('Error updating order status:', error);
+                    alert('Terjadi kesalahan. Silakan coba lagi.');
+                }
+            };
+        });
+    }
+
+    // Confirm delete order
+    function confirmDeleteOrder(orderId) {
+        if (confirm('Yakin ingin menghapus pesanan ini? Stok produk akan dikembalikan.')) {
+            deleteOrder(orderId);
+        }
+    }
+
+    // Delete order
+    async function deleteOrder(orderId) {
+        try {
+            const response = await fetch(`/api/orders/${orderId}`, {
+                method: 'DELETE'
+            });
+
+            if (response.ok) {
+                // Close modal if it's open
+                if (document.getElementById('orderDetailModal').style.display === 'block') {
+                    closeModal('orderDetailModal');
+                }
+
+                // Reload orders
+                loadOrders();
+                alert('Pesanan berhasil dihapus!');
+            } else {
+                alert('Gagal menghapus pesanan.');
+            }
+        } catch (error) {
+            console.error('Error deleting order:', error);
+            alert('Terjadi kesalahan. Silakan coba lagi.');
+        }
+    }
+
     // Init
     document.addEventListener('DOMContentLoaded', () => {
         loadProducts();
         document.getElementById('editForm').addEventListener('submit', updateProduct);
-    });
 
-    // Close modal when clicking outside
-    window.onclick = function(event) {
-        const modal = document.getElementById('editModal');
-        if (event.target == modal) {
-            modal.style.display = "none";
-        }
-    }
+        // Window click event to close modal when clicking outside
+        window.onclick = function(event) {
+            if (event.target === document.getElementById('editModal')) {
+                closeModal('editModal');
+            }
+            if (event.target === document.getElementById('orderDetailModal')) {
+                closeModal('orderDetailModal');
+            }
+        };
+    });
 </script>
 </body>
 </html>
