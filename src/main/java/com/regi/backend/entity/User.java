@@ -13,8 +13,8 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column()
-    private String role;
+    @Column(columnDefinition = "varchar(255) default 'USER'")
+    private String role = "USER";
 
     private String name;
 

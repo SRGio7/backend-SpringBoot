@@ -29,9 +29,14 @@
         const resultText = await response.text();
 
         if (resultText.includes("Login berhasil")) {
-            window.location.href = "/dashboardPrototype.html";
+            // Cek role
+            if (resultText.includes("ROLE:ADMIN")) {
+                window.location.href = "/adminDashboard.html";
+            } else {
+                window.location.href = "/dashboardPrototype.html";
+            }
         } else {
-            document.getElementById("result").innerText = "Login gagal: " + resultText;
+            document.getElementById("result").innerText = resultText;
         }
     });
 </script>
