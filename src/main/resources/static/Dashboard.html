@@ -500,6 +500,7 @@
     <header>
         <h1>Laptop</h1>
         <div class="cart-icon" id="cartIcon">
+            <button style="padding: 10px; border-radius: 10px; border: none; background-color: red; color: white; font-size: 20px; margin-right: 10px; cursor: pointer;" onclick="window.location.href='/login.html'">Logout</button>
             🛒
             <span class="cart-count" id="cartCount">0</span>
         </div>
@@ -940,10 +941,8 @@
             return;
         }
 
-        // Populate checkout items
         renderCheckoutItems();
 
-        // Show checkout modal
         cartPanel.style.right = "-400px";
         checkoutModal.style.display = "flex";
     });
@@ -1102,7 +1101,6 @@
         }
     });
 
-    // Initialize
     document.addEventListener('DOMContentLoaded', () => {
         fetchProducts();
         loadCartFromStorage();

@@ -35,6 +35,7 @@ public class OrderService {
         order.setCustomerPhone(orderDTO.getCustomer().getPhone());
         order.setCustomerAddress(orderDTO.getCustomer().getAddress());
         order.setTotalAmount(orderDTO.getTotalAmount());
+        order.setStatus(Order.OrderStatus.PENDING); // Default status is PENDING
 
         // Parse order date or use current time if not provided
         if (orderDTO.getOrderDate() != null && !orderDTO.getOrderDate().isEmpty()) {
@@ -67,6 +68,8 @@ public class OrderService {
                         product.setQuantity(newQuantity);
                         productRepository.save(product);
                         orderItem.setProduct(product);
+                    } else {
+                        throw new RuntimeException("Stok produk tidak mencukupi: " + product.getName());
                     }
                 });
             }

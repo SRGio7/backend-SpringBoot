@@ -2,41 +2,386 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Login</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - E-Store</title>
+    <style>
+        /* Base Styles */
+        :root {
+            --primary-color: #4CAF50;
+            --primary-dark: #388E3C;
+            --primary-light: #C8E6C9;
+            --accent-color: #FF5722;
+            --text-color: #333333;
+            --text-secondary: #757575;
+            --background-color: #f5f5f5;
+            --white: #ffffff;
+            --error-color: #F44336;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --border-radius: 8px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--background-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            background-image: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        }
+
+        /* Container Styles */
+        .login-container {
+            width: 100%;
+            max-width: 400px;
+            background-color: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Header Styles */
+        .login-header {
+            background-color: var(--primary-color);
+            color: var(--white);
+            padding: 30px 20px;
+            text-align: center;
+        }
+
+        .login-header h1 {
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: var(--white);
+        }
+
+        .login-header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        /* Form Styles */
+        .login-form {
+            padding: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--text-color);
+            font-size: 14px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 15px;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+            outline: none;
+        }
+
+        .form-group .input-icon {
+            position: absolute;
+            right: 15px;
+            top: 38px;
+            color: var(--text-secondary);
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 15px;
+            top: 38px;
+            cursor: pointer;
+            color: var(--text-secondary);
+            user-select: none;
+        }
+
+        /* Button Styles */
+        .login-button {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--primary-color);
+            color: var(--white);
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 10px;
+        }
+
+        .login-button:hover {
+            background-color: var(--primary-dark);
+        }
+
+        /* Alert Styles */
+        .alert {
+            padding: 10px 15px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .alert-error {
+            background-color: #ffebee;
+            color: var(--error-color);
+            border: 1px solid #ffcdd2;
+        }
+
+        .alert-success {
+            background-color: #e8f5e9;
+            color: var(--primary-color);
+            border: 1px solid #c8e6c9;
+        }
+
+        /* Loader */
+        .loader {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .loader-spinner {
+            width: 30px;
+            height: 30px;
+            border: 3px solid rgba(76, 175, 80, 0.2);
+            border-top: 3px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Form Validation Styles */
+        .form-group input.error {
+            border-color: var(--error-color);
+        }
+
+        .form-error-message {
+            color: var(--error-color);
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 480px) {
+            .login-container {
+                box-shadow: none;
+            }
+
+            .login-header {
+                padding: 20px;
+            }
+
+            .login-form {
+                padding: 20px;
+            }
+        }
+
+        /* Animation */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .login-container {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        /* Store Logo */
+        .store-logo {
+            width: 70px;
+            height: 70px;
+            margin: 0 auto 15px;
+            background-color: var(--white);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .store-logo span {
+            font-size: 30px;
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
-<h2>Login Page</h2>
-<form id="loginForm">
-    <input type="text" id="name" placeholder="Username" required><br>
-    <input type="password" id="password" placeholder="Password" required><br>
-    <button type="submit">Login</button>
-</form>
+<div class="login-container">
+    <div class="login-header">
+        <h1>Welcome </h1>
+        <p>Login to access your account</p>
+    </div>
 
-<p id="result"></p>
+    <div class="login-form">
+        <div id="alert" class="alert"></div>
+
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="name">Username</label>
+                <input type="text" id="name" placeholder="Enter your username" required>
+                <div class="form-error-message" id="nameError">Please enter a valid username</div>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" placeholder="Enter your password" required>
+                <span class="toggle-password" id="togglePassword">👁️</span>
+                <div class="form-error-message" id="passwordError">Please enter your password</div>
+            </div>
+
+            <button type="submit" class="login-button">Login</button>
+        </form>
+
+        <div class="loader" id="loader">
+            <div class="loader-spinner"></div>
+            <p style="margin-top: 10px; color: var(--text-secondary);">Logging in...</p>
+        </div>
+    </div>
+</div>
 
 <script>
-    document.getElementById("loginForm").addEventListener("submit", async function (e) {
-        e.preventDefault();
-        const name = document.getElementById("name").value;
-        const password = document.getElementById("password").value;
-
-        const response = await fetch("/login", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ name, password })
-        });
-
-        const resultText = await response.text();
-
-        if (resultText.includes("Login berhasil")) {
-            // Cek role
-            if (resultText.includes("ROLE:ADMIN")) {
-                window.location.href = "/AdminDashboard.html";
-            } else {
-                window.location.href = "/Dashboard.html";
-            }
+    // Toggle password visibility
+    document.getElementById('togglePassword').addEventListener('click', function() {
+        const passwordInput = document.getElementById('password');
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            this.textContent = '🔒';
         } else {
-            document.getElementById("result").innerText = resultText;
+            passwordInput.type = 'password';
+            this.textContent = '👁️';
+        }
+    });
+
+    // Show alert message
+    function showAlert(message, type) {
+        const alert = document.getElementById('alert');
+        alert.textContent = message;
+        alert.className = 'alert';
+        alert.classList.add(`alert-${type}`);
+        alert.style.display = 'block';
+
+        // Auto hide after 5 seconds
+        setTimeout(() => {
+            alert.style.display = 'none';
+        }, 5000);
+    }
+
+    // Form validation
+    function validateForm() {
+        let isValid = true;
+        const name = document.getElementById('name');
+        const password = document.getElementById('password');
+        const nameError = document.getElementById('nameError');
+        const passwordError = document.getElementById('passwordError');
+
+        // Reset errors
+        name.classList.remove('error');
+        password.classList.remove('error');
+        nameError.style.display = 'none';
+        passwordError.style.display = 'none';
+
+        // Validate username
+        if (name.value.trim() === '') {
+            name.classList.add('error');
+            nameError.style.display = 'block';
+            isValid = false;
+        }
+
+        // Validate password
+        if (password.value.trim() === '') {
+            password.classList.add('error');
+            passwordError.style.display = 'block';
+            isValid = false;
+        }
+
+        return isValid;
+    }
+
+    // Handle form submission
+    document.getElementById('loginForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        if (!validateForm()) {
+            return;
+        }
+
+        const name = document.getElementById('name').value;
+        const password = document.getElementById('password').value;
+
+        // Show loader
+        document.getElementById('loginForm').style.display = 'none';
+        document.getElementById('loader').style.display = 'block';
+
+        try {
+            const response = await fetch('/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, password })
+            });
+
+            const resultText = await response.text();
+
+            // Hide loader
+            document.getElementById('loginForm').style.display = 'block';
+            document.getElementById('loader').style.display = 'none';
+
+            if (resultText.includes('Login berhasil')) {
+                // Show success message
+                showAlert('Login successful! Redirecting...', 'success');
+
+                // Redirect based on role
+                setTimeout(() => {
+                    if (resultText.includes('ROLE:ADMIN')) {
+                        window.location.href = '/AdminDashboard.html';
+                    } else {
+                        window.location.href = '/Dashboard.html';
+                    }
+                }, 1000);
+            } else {
+                // Show error message
+                showAlert(resultText || 'Login failed. Please check your credentials.', 'error');
+            }
+        } catch (error) {
+            console.error('Login error:', error);
+
+            // Hide loader
+            document.getElementById('loginForm').style.display = 'block';
+            document.getElementById('loader').style.display = 'none';
+
+            // Show error message
+            showAlert('Network error. Please try again later.', 'error');
         }
     });
 </script>

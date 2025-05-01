@@ -615,6 +615,11 @@
     async function loadProducts() {
         try {
             const response = await fetch('/product');
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
             const products = await response.json();
 
             const table = document.getElementById('productTable');
@@ -671,7 +676,16 @@
             });
         } catch (error) {
             console.error('Error loading products:', error);
-            alert('Gagal memuat data produk. Silakan refresh halaman.');
+
+            // Tampilkan pesan error langsung pada tabel tanpa loading
+            const table = document.getElementById('productTable');
+            while (table.rows.length > 1) {
+                table.deleteRow(1);
+            }
+            const row = table.insertRow();
+            const cell = row.insertCell(0);
+            cell.colSpan = 7;
+            cell.innerHTML = '<div class="no-data-message">Gagal memuat data produk. Silakan refresh halaman.</div>';
         }
     }
 
@@ -752,10 +766,19 @@
 
     /* ORDERS TAB FUNCTIONALITY */
 
+    // Current order ID for detail modal
+    let currentOrderId = null;
+
     // Load orders
     async function loadOrders() {
         try {
             const response = await fetch('/api/orders');
+
+            // Check if response is ok
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
             const orders = await response.json();
 
             const table = document.getElementById('orderTable');
@@ -764,7 +787,7 @@
                 table.deleteRow(1);
             }
 
-            if (orders.length === 0) {
+            if (!orders || orders.length === 0) {
                 const row = table.insertRow();
                 const cell = row.insertCell(0);
                 cell.colSpan = 7;
@@ -809,21 +832,32 @@
             });
         } catch (error) {
             console.error('Error loading orders:', error);
-            alert('Gagal memuat data pesanan. Silakan refresh halaman.');
+
+            // Tampilkan pesan error pada tabel
+            const table = document.getElementById('orderTable');
+            while (table.rows.length > 1) {
+                table.deleteRow(1);
+            }
+            const row = table.insertRow();
+            const cell = row.insertCell(0);
+            cell.colSpan = 7;
+            cell.innerHTML = '<div class="no-data-message">Gagal memuat data pesanan. Silakan coba lagi.</div>';
         }
     }
-
-    // Current order ID for detail modal
-    let currentOrderId = null;
 
     // Open order detail modal
     async function openOrderDetailModal(orderId) {
         try {
             currentOrderId = orderId;
+
+            // Show modal first
+            document.getElementById('orderDetailModal').style.display = 'block';
+            document.getElementById('orderInfo').innerHTML = 'Memuat detail pesanan...';
+
             const response = await fetch(`/api/orders/${orderId}`);
 
             if (!response.ok) {
-                throw new Error('Failed to fetch order details');
+                throw new Error(`Failed to fetch order details: ${response.status} ${response.statusText}`);
             }
 
             const order = await response.json();
@@ -876,16 +910,22 @@
             const orderItemsTableBody = document.querySelector('#orderItemsTable tbody');
             orderItemsTableBody.innerHTML = '';
 
-            order.items.forEach(item => {
+            if (order.items && order.items.length > 0) {
+                order.items.forEach(item => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${item.productName}</td>
+                        <td class="item-price">${formatRupiah(item.productPrice)}</td>
+                        <td>${item.quantity}</td>
+                        <td class="item-subtotal">${formatRupiah(item.subtotal || (item.productPrice * item.quantity))}</td>
+                    `;
+                    orderItemsTableBody.appendChild(row);
+                });
+            } else {
                 const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${item.productName}</td>
-                    <td class="item-price">${formatRupiah(item.productPrice)}</td>
-                    <td>${item.quantity}</td>
-                    <td class="item-subtotal">${formatRupiah(item.subtotal)}</td>
-                `;
+                row.innerHTML = `<td colspan="4" style="text-align: center;">Tidak ada item pesanan</td>`;
                 orderItemsTableBody.appendChild(row);
-            });
+            }
 
             // Set total
             document.getElementById('orderTotal').textContent = `Total: ${formatRupiah(order.totalAmount)}`;
@@ -904,11 +944,10 @@
             // Setup delete order button
             const deleteOrderBtn = document.getElementById('deleteOrderBtn');
             deleteOrderBtn.onclick = () => confirmDeleteOrder(orderId);
-
-            document.getElementById('orderDetailModal').style.display = 'block';
         } catch (error) {
             console.error('Error loading order details:', error);
-            alert('Gagal memuat detail pesanan. Silakan coba lagi.');
+            const orderInfo = document.getElementById('orderInfo');
+            orderInfo.innerHTML = `<div class="no-data-message">Error: ${error.message || 'Gagal memuat detail pesanan'}. Silakan coba lagi.</div>`;
         }
     }
 
@@ -924,23 +963,36 @@
                         method: 'PUT'
                     });
 
-                    if (response.ok) {
-                        // Update active status button
-                        document.querySelectorAll('.status-btn').forEach(b => b.classList.remove('active'));
-                        btn.classList.add('active');
-
-                        // Update status badge in detail modal
-                        const statusBadge = document.querySelector('#orderInfo .status-badge');
-                        statusBadge.className = `status-badge status-${newStatus}`;
-                        statusBadge.textContent = newStatus;
-
-                        alert('Status pesanan berhasil diperbarui!');
-                    } else {
-                        alert('Gagal memperbarui status pesanan.');
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
                     }
+
+                    // Update active status button
+                    document.querySelectorAll('.status-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+
+                    // Update status badge in detail modal
+                    const statusBadge = document.querySelector('#orderInfo .status-badge');
+                    statusBadge.className = `status-badge status-${newStatus}`;
+                    statusBadge.textContent = newStatus;
+
+                    // Also update status in the table if visible
+                    if (document.getElementById('orders-tab').classList.contains('active')) {
+                        const orderRows = document.querySelectorAll('#orderTable tr');
+                        for (let i = 1; i < orderRows.length; i++) {
+                            const row = orderRows[i];
+                            if (row.cells[0].textContent == orderId) {
+                                const statusCell = row.cells[5];
+                                statusCell.innerHTML = `<span class="status-badge status-${newStatus}">${newStatus}</span>`;
+                                break;
+                            }
+                        }
+                    }
+
+                    alert('Status pesanan berhasil diperbarui!');
                 } catch (error) {
                     console.error('Error updating order status:', error);
-                    alert('Terjadi kesalahan. Silakan coba lagi.');
+                    alert(`Gagal memperbarui status pesanan: ${error.message}`);
                 }
             };
         });
@@ -960,27 +1012,30 @@
                 method: 'DELETE'
             });
 
-            if (response.ok) {
-                // Close modal if it's open
-                if (document.getElementById('orderDetailModal').style.display === 'block') {
-                    closeModal('orderDetailModal');
-                }
-
-                // Reload orders
-                loadOrders();
-                alert('Pesanan berhasil dihapus!');
-            } else {
-                alert('Gagal menghapus pesanan.');
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
             }
+
+            // Close modal if it's open
+            if (document.getElementById('orderDetailModal').style.display === 'block') {
+                closeModal('orderDetailModal');
+            }
+
+            // Reload orders
+            loadOrders();
+            alert('Pesanan berhasil dihapus!');
         } catch (error) {
             console.error('Error deleting order:', error);
-            alert('Terjadi kesalahan. Silakan coba lagi.');
+            alert(`Gagal menghapus pesanan: ${error.message}`);
         }
     }
 
-    // Init
+    // Init - Execute when page loads
     document.addEventListener('DOMContentLoaded', () => {
+        // Load products when page loads
         loadProducts();
+
+        // Add event listener for edit form submit
         document.getElementById('editForm').addEventListener('submit', updateProduct);
 
         // Window click event to close modal when clicking outside
